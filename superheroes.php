@@ -63,10 +63,44 @@ $superheroes = [
   ], 
 ];
 
-?>
 
-<ul>
-<?php foreach ($superheroes as $superhero): ?>
-  <li><?= $superhero['alias']; ?></li>
-<?php endforeach; ?>
-</ul>
+//  Exercise 3 l
+
+// Get query parameter safely
+$query = filter_input(INPUT_GET, 'query', FILTER_SANITIZE_STRING);
+$query = trim($query);
+
+// If no search query → return full list
+if ($query === null || $query === '') {
+    echo "<ul>";
+    foreach ($superheroes as $hero) {
+        echo "<li>" . htmlspecialchars($hero['alias']) . 
+             " (" . htmlspecialchars($hero['name']) . ")</li>";
+    }
+    echo "</ul>";
+    exit;
+}
+
+// Search for exact match by name or alias
+$match = null;
+$searchLower = strtolower($query);
+
+foreach ($superheroes as $hero) {
+    if (strtolower($hero['name']) === $searchLower ||
+        strtolower($hero['alias']) === $searchLower) {
+
+        $match = $hero;
+        break;
+    }
+}
+
+// Return result
+if ($match) {
+    echo "<h3>" . htmlspecialchars($match['alias']) . "</h3>";
+    echo "<h4>" . htmlspecialchars($match['name']) . "</h4>";
+    echo "<p>" . htmlspecialchars($match['biography']) . "</p>";
+} else {
+    echo "<p>Superhero not found</p>";
+}
+
+?>

@@ -1,21 +1,28 @@
-// app.js - Exercise 2
+// app.js - Exercise 3
 
 document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('search-btn');
+    const form = document.getElementById('search-form');
+    const input = document.getElementById('search');
+    const resultDiv = document.getElementById('result');
 
-    btn.addEventListener('click', (e) => {
+    form.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        // AJAX call to superheroes.php using fetch()
-        fetch('superheroes.php')
+        const query = input.value.trim();
+
+        // Build URL
+        const url = query === '' 
+            ? 'superheroes.php'
+            : `superheroes.php?query=${encodeURIComponent(query)}`;
+
+        fetch(url)
             .then(response => response.text())
             .then(data => {
-                // Show the result in an alert box
-                alert(data);
+                resultDiv.innerHTML = data; // Show results in the page
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('There was a problem with the request.');
+                resultDiv.innerHTML = '<p>Error with the request.</p>';
             });
     });
 });
